@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import  Chroma
+from langchain.vectorstores import Chroma
 
 # Function that loads a document
 def load_document(file):
@@ -70,7 +70,26 @@ if __name__ == '__main__':
         if api_key:
             os.environ['OPENAI_API_KEY'] = api_key
 
-        file = st.file_uploader('Upload a file:', type=['pdf', 'txt', 'docx'])
+        uploaded_file = st.file_uploader('Upload a file:', type=['pdf', 'txt', 'docx'])
         chunk_size = st.number_input('Chunk size:', min_value=100, max_value=2048, value=512)
         k_val = st.number_input('k:', min_value=1, max_value=20, value=3)
         add_data = st.button('Add Data')
+
+        if uploaded_file and add_data:
+            with st.spinner('Reading, chunking and embdedding the file ...'):
+                bytes_data = uploaded_file.read()
+                file_name = os.path.join('./', uploaded_file.name)
+                with open(file_name, 'wb') as f:
+                    f.write(bytes_data)
+
+                data = load_document(file_name)
+                chunks = chunk_data(data, chunk_size=chunk_size)
+                st.write(f'Chunk size: {chunk_size} and Chunks: {len(chunks)}')
+
+                tokens_count, cost = calculate_embedding_cost(chunks)
+                st.write(f'Embedding cost: {cost:.4f}')
+
+                vector_store = create_embeddings(chunks)
+
+                st.session_state.vs = vector_store
+                st.success('File successfully uploaded, chunked and embedded!')
