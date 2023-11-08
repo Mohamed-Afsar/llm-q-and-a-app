@@ -56,3 +56,21 @@ def ask_and_get_answer(vector_store, question, k=3):
 
     answer = chain.run(question)
     return answer
+
+# UI
+if __name__ == '__main__':
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv(), override=True)
+
+    st.image('img.png')
+    st.subheader('LLM Question-Answering Application 🤖')
+
+    with st.sidebar:
+        api_key = st.text_input('OpenAI APK key:', type='password')
+        if api_key:
+            os.environ['OPENAI_API_KEY'] = api_key
+
+        file = st.file_uploader('Upload a file:', type=['pdf', 'txt', 'docx'])
+        chunk_size = st.number_input('Chunk size:', min_value=100, max_value=2048, value=512)
+        k_val = st.number_input('k:', min_value=1, max_value=20, value=3)
+        add_data = st.button('Add Data')
