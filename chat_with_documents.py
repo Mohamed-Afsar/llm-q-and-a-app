@@ -93,3 +93,11 @@ if __name__ == '__main__':
 
                 st.session_state.vs = vector_store
                 st.success('File successfully uploaded, chunked and embedded!')
+
+    question = st.text_input('Ask a question about the content of your file:')
+
+    if question:
+        if 'vs' in st.session_state:
+            st.write(f'k: {k_val}')
+            answer = ask_and_get_answer(st.session_state.vs, question, k_val)
+            st.text_area('LLM Answer: ', value=answer)
