@@ -101,3 +101,11 @@ if __name__ == '__main__':
             st.write(f'k: {k_val}')
             answer = ask_and_get_answer(st.session_state.vs, question, k_val)
             st.text_area('LLM Answer: ', value=answer)
+
+    st.divider()
+    if 'history' not in st.session_state:
+        st.session_state.history = ''
+
+    value = f'Q: {question}\nA: {answer}'
+    st.session_state.history = f'{value}\n{"-" * 50}\n{st.session_state.history}'
+    st.text_area(label='Q&A History', value=st.session_state.history, key='qa_history_text_area', height=400)
